@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Ciphera\PulseAnalytics\:
+    resource: '../Classes/*'
+
+  # Registered explicitly rather than by autoconfiguration so the event and the
+  # method are visible here, in one place, to anyone auditing what this
+  # extension hooks into. It is exactly one thing.
+  Ciphera\PulseAnalytics\EventListener\AddTracker:
+    tags:
+      - name: event.listener
+        identifier: 'pulse-analytics/add-tracker'
+        event: TYPO3\CMS\Core\Page\Event\BeforeJavaScriptsRenderingEvent

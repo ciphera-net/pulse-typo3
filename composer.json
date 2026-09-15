@@ -1,0 +1,40 @@
+{
+	"name": "ciphera/pulse-analytics",
+	"type": "typo3-cms-extension",
+	"description": "Privacy-first web analytics. No cookies, no personal data, and the script it adds to your pages is under 3 KB.",
+	"homepage": "https://pulse.ciphera.net",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Ciphera",
+			"homepage": "https://ciphera.net",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/ciphera-net/pulse-typo3/issues",
+		"source": "https://github.com/ciphera-net/pulse-typo3",
+		"docs": "https://docs.ciphera.net/pulse"
+	},
+	"keywords": [
+		"TYPO3 CMS",
+		"analytics",
+		"privacy",
+		"cookieless",
+		"gdpr"
+	],
+	"require": {
+		"php": ">=8.2",
+		"typo3/cms-core": "^13.4 || ^14.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Ciphera\\PulseAnalytics\\": "Classes/"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "pulse_analytics"
+		}
+	}
+}
