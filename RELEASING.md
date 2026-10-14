@@ -96,6 +96,9 @@ post-hoc and selective.
 
 Packagist is separate and additive: `composer require ciphera/pulse-analytics`
 resolves from Packagist, the TER key serves the non-Composer installs.
+**Live on Packagist since 14-10-2026** (`v1.0.0`, account `ciphera`, a GitHub push
+hook updates it on every tag; both harness runs green the same morning). TER
+publishing (steps 1–3 above) still waits on the typo3.org account and token.
 
 ## Licence — forced, not chosen
 
