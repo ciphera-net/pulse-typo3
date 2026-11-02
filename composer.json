@@ -1,7 +1,7 @@
 {
 	"name": "ciphera/pulse-analytics",
 	"type": "typo3-cms-extension",
-	"description": "Privacy-first web analytics. No cookies, no personal data, and the script it adds to your pages is under 3 KB.",
+	"description": "Privacy-first web analytics. No cookies, no IP addresses stored, and the script it adds to your pages is under 3 KB.",
 	"homepage": "https://pulse.ciphera.net",
 	"license": "GPL-2.0-or-later",
 	"authors": [
