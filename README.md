@@ -1,16 +1,18 @@
 # Pulse Analytics for TYPO3
 
-Privacy-first analytics for a TYPO3 site, in one extension. No cookies, no
-IP addresses stored, and the script it adds to your pages is under 3 KB.
+This extension adds privacy-first analytics to a TYPO3 site. Pulse Analytics
+sets no cookies and never stores IP addresses, and the script it adds to your
+pages is under 3 KB.
 
 [Pulse Analytics](https://pulse.ciphera.net) is built by
 [Ciphera](https://ciphera.net), a company in Belgium, and hosted in Europe.
 
 ## Requirements
 
-TYPO3 13.4 LTS or 14 LTS, PHP 8.2 or later. No database tables, no dependencies
-beyond TYPO3 core. You need a Pulse Analytics account with a site registered for
-the same domain; the free plan is enough to start.
+The extension requires TYPO3 13.4 LTS or 14 LTS and PHP 8.2 or later. It adds
+no database tables and depends on nothing beyond TYPO3 core. You need a Pulse
+Analytics account with a site registered for the same domain; the free plan is
+enough to start.
 
 ## Install
 
@@ -20,8 +22,8 @@ vendor/bin/typo3 extension:setup
 ```
 
 That is the whole setup. The tracker uses each visitor's own hostname by
-default, so a single-site or multi-site installation both work with no
-configuration at all.
+default, so single-site and multi-site installations both work without any
+configuration.
 
 To pin a domain explicitly, go to **Admin Tools → Settings → Configure
 Extensions → pulse_analytics**.
@@ -30,11 +32,11 @@ Extensions → pulse_analytics**.
 
 | Setting | Default | What it does |
 |---|---|---|
-| Domain | empty | The domain this site is registered under in Pulse. **Leave empty on a multi-site installation** — see below. |
-| Record clicks, copies and form submits | off | Loads the companion script. A second, separate request — see below. |
-| Custom API origin | empty | Route events through your own proxy origin. A bare origin, not a full URL. |
+| Domain | empty | The domain this site is registered under in Pulse. **Leave empty on a multi-site installation** (see below). |
+| Record clicks, copies and form submits | off | Loads the companion script, which is a second, separate request (see below). |
+| Custom API origin | empty | Route events through your own proxy origin. Enter the origin only, without a path. |
 
-🔑 **Leave Domain empty if this TYPO3 serves more than one site.** Extension
+**Leave Domain empty if this TYPO3 serves more than one site.** Extension
 configuration is installation-wide, so a pinned domain would label every site's
 traffic as that one domain. Empty means the tracker reads the browser's own
 hostname, which is the correct answer for every site independently.
@@ -42,9 +44,9 @@ hostname, which is the correct answer for every site independently.
 ## Four things worth knowing
 
 **It runs on the front end only, never in the TYPO3 backend.** The backend uses
-the same `PageRenderer` and the same `AssetRenderer` as the front end, so this
-is an explicit `ApplicationType` guard rather than something that comes free —
-and there is a test that fails if it is removed.
+the same `PageRenderer` and the same `AssetRenderer` as the front end, so
+keeping the extension out of the backend takes an explicit `ApplicationType`
+guard. A test fails if that guard is removed.
 
 **What lands in your pages is the literal tag:**
 
@@ -52,14 +54,15 @@ and there is a test that fails if it is removed.
 <script defer="defer" data-domain="example.com" src="https://js.ciphera.net/script.js"></script>
 ```
 
-No inline JavaScript, so **a strict Content-Security-Policy needs no nonce and
-no `unsafe-inline` for this extension** — only `script-src https://js.ciphera.net`
-and `connect-src https://pulse-api.ciphera.net`.
+The tag has no inline JavaScript, so a strict Content-Security-Policy does not
+need a nonce or `unsafe-inline` for this extension. It needs only
+`script-src https://js.ciphera.net` and
+`connect-src https://pulse-api.ciphera.net`.
 
-**No cache-busting query is appended to the script URL.** TYPO3 leaves a
-fully-qualified external URL alone, and there is an assertion that keeps it that
-way — appending a per-installation query to a third-party CDN URL would make
-every TYPO3 site request a distinct URL from ours.
+**The script URL carries no cache-busting query.** TYPO3 leaves a
+fully-qualified external URL alone, and an assertion keeps it that way:
+appending a per-installation query to a third-party CDN URL would make every
+TYPO3 site request a distinct URL from ours.
 
 **The interaction capture is a second request on purpose.** The core script's
 size is a published claim, and nothing is folded into it to make a feature look
@@ -75,8 +78,8 @@ vendor/bin/typo3 cache:flush
 ```
 
 TYPO3 has no per-setting cache tag for extension configuration, so this is
-manual. A stale tag still reports data — just under the previous domain — which
-is exactly the kind of thing nobody notices, so it is worth doing deliberately.
+manual. A stale tag still reports data, just under the previous domain, and that
+is easy to overlook, so it is worth flushing the cache deliberately.
 
 ## A mistyped domain is dropped, never injected
 
@@ -87,25 +90,25 @@ one.
 
 ## What Pulse Analytics measures
 
-Pageviews, referrers, countries, devices, time on page and scroll depth, plus
-goals, funnels and campaigns. It sets no cookies and never stores IP addresses.
-Visitors whose browser sends Do Not Track or Global Privacy Control are not
-counted at all — so if you test in Brave or Firefox and see nothing, that is the
-tracker behaving correctly. Safari is the easiest browser to verify an install
-in.
+Pulse Analytics measures pageviews, referrers, countries, devices, time on page
+and scroll depth, plus goals, funnels and campaigns.
+It sets no cookies and never stores IP addresses. Visitors whose browser sends
+Do Not Track or Global Privacy Control are not counted, so if you test in Brave
+or Firefox and see nothing, the tracker is behaving correctly. Safari is the
+easiest browser to verify an install in.
 
 ## Licence
 
-**GPL-2.0-or-later**, and that is not a choice we made.
+The extension is licensed **GPL-2.0-or-later**, which TYPO3's licensing requires.
 
-Every other public Pulse integration — Astro, Docusaurus, Framer, Google Tag
-Manager — is Apache-2.0. This extension is not, because TYPO3's licensing
+Every other public Pulse integration (Astro, Docusaurus, Framer, Google Tag
+Manager) is Apache-2.0. This extension is not, because TYPO3's licensing
 position is that TYPO3 and installed extensions "form a single combined
 program", so "your extensions fall under the GNU General Public License, version
 2 or later"; the `composer.json` reference adds that the `license` key "has to be
 GPL-2.0-only or GPL-2.0-or-later". Apache-2.0 is compatible with GPLv3 but not
 GPLv2, so it cannot satisfy that. The Drupal and Joomla integrations are GPL for
-the same kind of reason. The divergence is deliberate and unavoidable, not drift.
+the same kind of reason. The divergence is deliberate and unavoidable.
 
 TYPO3 is a registered trademark of the TYPO3 Association. This is an independent
 extension and is not affiliated with or endorsed by the TYPO3 project or the

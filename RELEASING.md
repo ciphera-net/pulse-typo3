@@ -90,7 +90,7 @@ post-hoc and selective.
 3. Publish the zip of the release **tag**, made by `git archive`, with tailor
    installed outside this repository:
    ```bash
-   V=1.0.2
+   V=1.0.3
    OUT=<a scratch directory>
    (cd "$OUT" && composer require --quiet typo3/tailor)
    git archive --format=zip --prefix=pulse_analytics/ -o "$OUT/pulse_analytics_$V.zip" "v$V"
@@ -125,10 +125,10 @@ resolves from Packagist, the TER key serves the non-Composer installs.
 **Live on Packagist since 14-10-2026** (`v1.0.0`, account `ciphera`, a GitHub push
 hook updates it on every tag; both harness runs green the same morning). TER
 publishing (steps 1 to 3 above) still waits on the typo3.org account and token.
-The first TER upload will be 1.0.2: the first release with the extension icon
+The first TER upload will be 1.0.3 (1.0.2 was the first release with the extension icon
 (`Resources/Public/Icons/Extension.svg`, the brand library's Pulse icon, the same
 file the Craft and Statamic packages ship) and with `.gitattributes`, so it is
-the first tag whose archive leaves the development files out.
+the first tag whose archive leaves the development files out; 1.0.3 rewrote the settings help text).
 
 ## Licence — forced, not chosen
 
