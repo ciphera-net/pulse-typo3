@@ -1,0 +1,9 @@
+# Development files stay out of every release archive: the Composer dist that
+# Packagist serves and the zip uploaded to TER (RELEASING.md builds it with
+# `git archive`). A TER install unpacks into typo3conf/ext/, inside the web root.
+/.gitattributes  export-ignore
+/.gitignore      export-ignore
+/.gitleaks.toml  export-ignore
+/.woodpecker     export-ignore
+/RELEASING.md    export-ignore
+/scripts         export-ignore
