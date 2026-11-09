@@ -21,12 +21,12 @@
  */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Pulse Analytics',
-    'description' => 'Privacy-first web analytics. No cookies, no IP addresses stored, and the script it adds to your pages is under 3 KB.',
+    'description' => 'Pulse Analytics adds privacy-first web analytics to a TYPO3 site. It sets no cookies and never stores IP addresses, and the script it adds to your pages is under 3 KB.',
     'category' => 'fe',
     'author' => 'Ciphera',
     'author_company' => 'Ciphera BV',
     'state' => 'stable',
-    'version' => '1.0.1',
+    'version' => '1.0.2',
     'constraints' => [
         'depends' => [
             'typo3' => '13.4.0-14.99.99',

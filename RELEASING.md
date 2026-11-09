@@ -84,21 +84,51 @@ post-hoc and selective.
 
 1. Register the extension key **`pulse_analytics`** on
    `extensions.typo3.org` under a typo3.org account.
-2. Create a **personal access token** on extensions.typo3.org and export it as
-   `TYPO3_API_TOKEN`. Username/password auth also works and is *"highly
-   discouraged"*.
-3. Tag the release, then:
+2. Create a **personal access token** on extensions.typo3.org and put it in
+   the workspace `.env` as `TYPO3_API_TOKEN`. Username/password auth also works
+   and is *"highly discouraged"*.
+3. Publish the zip of the release **tag**, made by `git archive`, with tailor
+   installed outside this repository:
    ```bash
-   composer require --dev typo3/tailor
-   TYPO3_API_TOKEN=… vendor/bin/tailor ter:publish 1.0.0
+   V=1.0.2
+   OUT=<a scratch directory>
+   (cd "$OUT" && composer require --quiet typo3/tailor)
+   git archive --format=zip --prefix=pulse_analytics/ -o "$OUT/pulse_analytics_$V.zip" "v$V"
+   # dry run, no token needed: unpacks, re-packs and validates exactly as ter:publish does
+   (cd "$OUT" && vendor/bin/tailor create-artefact "$V" pulse_analytics --artefact="$OUT/pulse_analytics_$V.zip")
+   unzip -l "$OUT/tailor-version-artefact/pulse_analytics_$V.zip"
+   # the publish
+   (cd "$OUT" && TYPO3_API_TOKEN=… vendor/bin/tailor ter:publish "$V" pulse_analytics \
+      --artefact="$OUT/pulse_analytics_$V.zip" --comment="<the GitHub Release notes>")
    ```
-4. Keep `ext_emconf.php`'s `version` in step with `composer.json`.
+   Never run `tailor ter:publish` from a checkout, as tailor's own README
+   shows. Measured 09-11-2026 with tailor 2.0.0:
+   - `composer require --dev typo3/tailor` edits the `composer.json` that ships
+     inside the zip, and leaves the tree dirty.
+   - tailor's exclude list knows `.git` only as a directory. In a git worktree
+     `.git` is a file holding the absolute path of the main clone, and
+     `create-artefact` from a worktree put it in the zip.
+   - tailor packs whatever is in the directory, untracked files included.
+
+   `git archive` of the tag ships exactly the tagged files minus the
+   `export-ignore` paths in `.gitattributes` (the same set as Packagist's dist
+   zip): `Classes/`, `Configuration/`, `Resources/`, `composer.json`,
+   `ext_conf_template.txt`, `ext_emconf.php`, `LICENSE.txt` and `README.md`.
+4. Check the result. Every tailor command needs the token, reads included
+   (`ter:details` answers "No authentication credentials are defined" without
+   it): `tailor ter:version "$V" pulse_analytics`. The extension page sits
+   behind an Anubis bot wall, so open it in a browser.
+5. Keep `ext_emconf.php`'s `version` in step with the tag.
 
 Packagist is separate and additive: `composer require ciphera/pulse-analytics`
 resolves from Packagist, the TER key serves the non-Composer installs.
 **Live on Packagist since 14-10-2026** (`v1.0.0`, account `ciphera`, a GitHub push
 hook updates it on every tag; both harness runs green the same morning). TER
-publishing (steps 1–3 above) still waits on the typo3.org account and token.
+publishing (steps 1 to 3 above) still waits on the typo3.org account and token.
+The first TER upload will be 1.0.2: the first release with the extension icon
+(`Resources/Public/Icons/Extension.svg`, the brand library's Pulse icon, the same
+file the Craft and Statamic packages ship) and with `.gitattributes`, so it is
+the first tag whose archive leaves the development files out.
 
 ## Licence — forced, not chosen
 
@@ -114,10 +144,12 @@ reads as the constraint it is rather than as drift.
 
 ## Release steps
 
-1. Bump `version` in `ext_emconf.php` and `extra.typo3/cms.version` if present.
+1. Bump `version` in `ext_emconf.php` (`composer.json` carries no version).
 2. `./scripts/verify.sh 14` and `HTTP_PORT=18101 ./scripts/verify.sh 13`.
-3. Tag: `git tag -a v1.0.0 -m "Release 1.0.0" && git push origin v1.0.0`.
-4. `tailor ter:publish` (above).
+3. Merge to `main`, then tag it: `git tag -a v1.0.2 -m "Release 1.0.2" && git push origin v1.0.2`.
+   Packagist picks the tag up through the GitHub hook.
+4. GitHub Release notes for the tag (`gh release create v1.0.2 --title 1.0.2 --notes-file …`).
+5. TER: the archive and `tailor ter:publish` (above), with the same notes as the upload comment.
 
 ## Notes for the next person
 
