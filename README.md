@@ -2,7 +2,7 @@
 
 This extension adds privacy-first analytics to a TYPO3 site. Pulse Analytics
 sets no cookies and never stores IP addresses, and the script it adds to your
-pages is under 3 KB.
+pages is about 3 KB.
 
 [Pulse Analytics](https://pulse.ciphera.net) is built by
 [Ciphera](https://ciphera.net), a company in Belgium, and hosted in Switzerland.
@@ -33,7 +33,6 @@ Extensions → pulse_analytics**.
 | Setting | Default | What it does |
 |---|---|---|
 | Domain | empty | The domain this site is registered under in Pulse. **Leave empty on a multi-site installation** (see below). |
-| Record clicks, copies and form submits | off | Loads the companion script, which is a second, separate request (see below). |
 | Custom API origin | empty | Route events through your own proxy origin. Enter the origin only, without a path. |
 
 **Leave Domain empty if this TYPO3 serves more than one site.** Extension
@@ -64,9 +63,7 @@ fully-qualified external URL alone, and an assertion keeps it that way:
 appending a per-installation query to a third-party CDN URL would make every
 TYPO3 site request a distinct URL from ours.
 
-**The interaction capture is a second request on purpose.** The core script's
-size is a published claim, and nothing is folded into it to make a feature look
-free.
+**The site's settings in Pulse decide what the script records.** Scroll depth, outbound links, file downloads, and clicks, copies and form submits are each switched on or off in your site's settings in Pulse (Settings → General). The tag stays the same, so there is nothing to change here.
 
 ## Changing settings needs a cache flush
 

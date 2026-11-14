@@ -1,7 +1,7 @@
 {
 	"name": "ciphera/pulse-analytics",
 	"type": "typo3-cms-extension",
-	"description": "Pulse Analytics adds privacy-first web analytics to a TYPO3 site. It sets no cookies and never stores IP addresses, and the script it adds to your pages is under 3 KB.",
+	"description": "Pulse Analytics adds privacy-first web analytics to a TYPO3 site. It sets no cookies and never stores IP addresses, and the script it adds to your pages is about 3 KB.",
 	"homepage": "https://pulse.ciphera.net",
 	"license": "GPL-2.0-or-later",
 	"authors": [

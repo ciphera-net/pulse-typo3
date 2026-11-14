@@ -12,8 +12,8 @@ the site and reads the tag back out of the emitted HTML. Five cases:
 | **13.4** (older LTS) | ✅ all five, two consecutive runs |
 
 The cases: the tag with a domain and **no query appended to the CDN url**;
-domain + API origin + companion, with the companion carrying no domain of its
-own; no domain configured meaning auto-detect rather than an empty attribute; an
+domain + API origin, with one tag, no flag attributes and a stale `companion`
+value ignored; no domain configured meaning auto-detect rather than an empty attribute; an
 invalid domain dropped rather than injected; and **zero** references to
 `ciphera` in the TYPO3 backend while the front end still has them.
 

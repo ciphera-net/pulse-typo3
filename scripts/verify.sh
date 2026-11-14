@@ -75,7 +75,6 @@ done
 
 FAILURES=0
 CORE='https://js\.ciphera\.net/script\.js'
-COMP='https://js\.ciphera\.net/script\.interactions\.js'
 
 # 🔴 THE FLUSH MUST BE INSIDE THE RETRY LOOP, and getting that wrong produced a
 # test that was reliably one step behind itself.
@@ -95,27 +94,27 @@ COMP='https://js\.ciphera\.net/script\.interactions\.js'
 # a cached page is where an analytics tag most easily goes wrong, so it is worth
 # exercising rather than configuring away.
 #
-# $1 label, $2 domain, $3 companion, $4 api, $5 must-match ERE, $6 must-NOT-match ERE
+# $1 label, $2 domain, $3 api, $4 must-match ERE, $5 must-NOT-match ERE, $6 any value = also store the retired companion key
 check() {
-  php "$EXT_DIR/scripts/set-config.php" config/system/settings.php "$2" "$3" "$4"
+  php "$EXT_DIR/scripts/set-config.php" config/system/settings.php "$2" "$3" ${6:+stale}
   local tags
   for _ in $(seq 1 20); do
     php vendor/bin/typo3 cache:flush >/dev/null 2>&1
     tags=$(curl -s "http://127.0.0.1:$HTTP_PORT/" \
       | grep -oE '<script[^>]*ciphera[^>]*></script>' | tr '\n' ' ')
-    printf '%s' "$tags" | grep -qE "$5" && break
+    printf '%s' "$tags" | grep -qE "$4" && break
     sleep 0.5
   done
-  if printf '%s' "$tags" | grep -qE "$5"; then
+  if printf '%s' "$tags" | grep -qE "$4"; then
     echo "    ✅ $1"
   else
     echo "    ❌ $1"
-    echo "       expected to match: $5"
+    echo "       expected to match: $4"
     echo "       got: ${tags:-<nothing>}"
     FAILURES=$((FAILURES + 1))
   fi
-  if [ -n "${6:-}" ] && printf '%s' "$tags" | grep -qE "$6"; then
-    echo "    ❌ $1 — unexpectedly present: $6"
+  if [ -n "${5:-}" ] && printf '%s' "$tags" | grep -qE "$5"; then
+    echo "    ❌ $1 — unexpectedly present: $5"
     echo "       got: $tags"
     FAILURES=$((FAILURES + 1))
   fi
@@ -127,33 +126,35 @@ echo "==> checking the served HTML"
 # CDN url alone. Joomla did not — it appended ?mediaVersion — so this is checked
 # rather than assumed. Do not relax it.
 check "domain only, and no query appended to the CDN url" \
-  "example.com" "0" "" \
+  "example.com" "" \
   "<script defer=\"defer\" data-domain=\"example\.com\" src=\"$CORE\"></script>" \
   "script\.js\?"
 
-check "domain + api + companion, companion carries no domain" \
-  "chosen.dev" "1" "https://proxy.example.com/" \
-  "<script defer=\"defer\" data-domain=\"chosen\.dev\" data-api=\"https://proxy\.example\.com\" src=\"$CORE\"></script> <script defer=\"defer\" src=\"$COMP\"></script>" \
-  ""
+# A stale `companion` value is stored on purpose (last argument): it must be
+# ignored, so the page carries one tag and no flag attribute.
+check "domain + api: one tag, a stale companion value ignored, no flag attributes" \
+  "chosen.dev" "https://proxy.example.com/" \
+  "^<script defer=\"defer\" data-domain=\"chosen\.dev\" data-api=\"https://proxy\.example\.com\" src=\"$CORE\"></script> \$" \
+  "interactions|data-no-|data-ignore-" stale
 
 check "no domain configured means auto-detect, not an empty attribute" \
-  "" "0" "" \
+  "" "" \
   "^<script defer=\"defer\" src=\"$CORE\"></script> \$" \
   "data-domain"
 
 check "an invalid domain is dropped, never injected" \
-  'bad" onload="x' "0" "" \
+  'bad" onload="x' "" \
   "^<script defer=\"defer\" src=\"$CORE\"></script> \$" \
   "onload"
 
 # 🔴 The backend uses the same PageRenderer and the same AssetRenderer as the
 # frontend, so without the ApplicationType guard the tracker would be injected
-# into the TYPO3 backend. Companion on, to catch both tags.
-php "$EXT_DIR/scripts/set-config.php" config/system/settings.php "example.com" "1" ""
+# into the TYPO3 backend. 
+php "$EXT_DIR/scripts/set-config.php" config/system/settings.php "example.com" ""
 # Flush on every attempt, for the opcache reason above.
 for _ in $(seq 1 20); do
   php vendor/bin/typo3 cache:flush >/dev/null 2>&1
-  curl -s "http://127.0.0.1:$HTTP_PORT/" | grep -q 'script.interactions.js' && break
+  curl -s "http://127.0.0.1:$HTTP_PORT/" | grep -q 'js.ciphera.net' && break
   sleep 0.5
 done
 BE_HITS=$(curl -s "http://127.0.0.1:$HTTP_PORT/typo3/" | grep -c 'ciphera')

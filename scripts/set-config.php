@@ -12,15 +12,18 @@ declare(strict_types=1);
  * family as a regex dying across YAML → sh → node: if a value has to survive
  * three quoting layers, remove the layers rather than escaping harder.
  *
- *   php scripts/set-config.php <settings.php> <domain> <companion> <api>
+ *   php scripts/set-config.php <settings.php> <domain> <api> [stale]
+ *
+ * A fifth argument, whatever its value, also stores the retired `companion`
+ * key, to prove that a value left behind by an older version is ignored.
  */
 
-if ($argc !== 5) {
-    fwrite(STDERR, "usage: set-config.php <settings.php> <domain> <companion> <api>\n");
+if ($argc !== 4 && $argc !== 5) {
+    fwrite(STDERR, "usage: set-config.php <settings.php> <domain> <api> [stale]\n");
     exit(2);
 }
 
-[, $file, $domain, $companion, $api] = $argv;
+[, $file, $domain, $api] = $argv;
 
 if (!is_file($file)) {
     fwrite(STDERR, "REFUSING: no such settings file: $file\n");
@@ -30,8 +33,10 @@ if (!is_file($file)) {
 $config = require $file;
 $config['EXTENSIONS']['pulse_analytics'] = [
     'domain' => $domain,
-    'companion' => $companion,
     'api' => $api,
 ];
+if ($argc === 5) {
+    $config['EXTENSIONS']['pulse_analytics']['companion'] = '1';
+}
 
 file_put_contents($file, '<?php' . PHP_EOL . 'return ' . var_export($config, true) . ';' . PHP_EOL);

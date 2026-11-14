@@ -64,16 +64,6 @@ final class AddTracker
             TagBuilder::ASSET_OPTIONS,
         );
 
-        if ($settings['companion'] !== true) {
-            return;
-        }
-
-        $collector->addJavaScript(
-            'pulse_analytics_companion',
-            TagBuilder::COMPANION_URL,
-            TagBuilder::companionAttributes(),
-            TagBuilder::ASSET_OPTIONS,
-        );
     }
 
     private function isFrontend(): bool
@@ -95,7 +85,7 @@ final class AddTracker
     }
 
     /**
-     * @return array{domain: string, companion: bool, api: string}
+     * @return array{domain: string, api: string}
      */
     private function settings(): array
     {
@@ -110,7 +100,6 @@ final class AddTracker
 
         return [
             'domain' => trim((string)($raw['domain'] ?? '')),
-            'companion' => (bool)($raw['companion'] ?? false),
             'api' => trim((string)($raw['api'] ?? '')),
         ];
     }
