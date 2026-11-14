@@ -17,16 +17,16 @@
  * evaluated) AND tailor/TER read the metadata from composer.json. Verify the
  * second half before acting on the first.
  *
- * Keep `version` in step with composer.json's `extra.typo3/cms.version`.
+ * Keep `version` in step with the release tag (composer.json carries none).
  */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Pulse Analytics',
-    'description' => 'Pulse Analytics adds privacy-first web analytics to a TYPO3 site. It sets no cookies and never stores IP addresses, and the script it adds to your pages is under 3 KB.',
+    'description' => 'Pulse Analytics adds privacy-first web analytics to a TYPO3 site. It sets no cookies and never stores IP addresses, and the script it adds to your pages is about 3 KB.',
     'category' => 'fe',
     'author' => 'Ciphera',
     'author_company' => 'Ciphera BV',
     'state' => 'stable',
-    'version' => '1.0.3',
+    'version' => '1.1.0',
     'constraints' => [
         'depends' => [
             'typo3' => '13.4.0-14.99.99',

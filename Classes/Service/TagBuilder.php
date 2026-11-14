@@ -20,15 +20,13 @@ namespace Ciphera\PulseAnalytics\Service;
  * says is testable without booting TYPO3, and reads side by side with the same
  * decisions in the Drupal, Joomla, Astro, Framer and Docusaurus integrations.
  *
- * The URLs, the domain grammar and the rule that the companion script is a
- * SECOND request are copied from those rather than re-derived. Two Pulse install
+ * The URLs and the domain grammar are copied from those rather than re-derived. Two Pulse install
  * surfaces disagreeing about what the tag looks like is a drift bug waiting to
  * happen.
  */
 final class TagBuilder
 {
     public const SCRIPT_URL = 'https://js.ciphera.net/script.js';
-    public const COMPANION_URL = 'https://js.ciphera.net/script.interactions.js';
 
     /**
      * A registrable hostname.
@@ -113,18 +111,5 @@ final class TagBuilder
         }
 
         return $attributes;
-    }
-
-    /**
-     * Attributes for the companion tag.
-     *
-     * No data-domain: the tracker resolves the domain once, from the core
-     * script, and a second copy is a second thing to keep in step.
-     *
-     * @return array<string, string>
-     */
-    public static function companionAttributes(): array
-    {
-        return ['defer' => 'defer'];
     }
 }

@@ -1,8 +1,5 @@
 # cat=basic; type=string; label=Domain: Enter the domain this site is registered under in Pulse Analytics, for example example.com. Leave it empty on a multi-site installation. The tracker then uses each visitor's own hostname, which is right for every site.
 domain =
 
-# cat=basic; type=boolean; label=Record clicks, copies and form submits: This adds a second script as a separate request, so your pages only load it when you switch this on.
-companion = 0
-
 # cat=basic; type=string; label=Custom API origin: If you route events through your own proxy, enter its origin here, for example https://example.com. Enter the origin only, without a path, because the tracker adds its own. Leave this empty if you have not set up a proxy.
 api =
